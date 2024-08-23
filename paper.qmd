@@ -19,6 +19,7 @@ author:
         city: Medellín
 format: html
 editor: visual
+bibliography: references.bib
 ---
 
 # Introduction
@@ -29,9 +30,17 @@ editor: visual
 
 [*Revisión de literatura: se debe hacer una revisión de literatura y en último párrafo mencionar cuál es el principal aporte del documento respecto a la literatura existente.*]{style="color:red;"}
 
-# Data and Empirical Evidence
+**Provided literature:**
+
+-   [@cohen2003]
+
+-   [@stock2020introduction Exercise 10.2]
+
+    # Data and Empirical Evidence
 
 [*Se mencionan los datos utilizados con más detalle y se describen las estadísticas descriptivas de las variables más importantes a analizar*]{style="color:red;"}
+
+**Data:** A panel of 50 U.S. states plus the District of Columbia from 1983 to 1997 [@data_usseatbelts].
 
 # Econometric Model
 
