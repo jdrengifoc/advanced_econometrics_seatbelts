@@ -1,0 +1,12 @@
+project: 
+  type: website
+  
+website: 
+  title: "Seatbelts"
+  navbar:
+    left: 
+      - href: paper.qmd
+        text: "Paper"
+      - href: slides.qmd
+        text: "Slides"
+        

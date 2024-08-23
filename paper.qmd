@@ -1,0 +1,46 @@
+---
+title: "The Effects of Mandatory Seat Belt Laws on Driving Behavior and Traffic Fatalities"
+author:
+  - name: Juan David Rengifo-Castro
+    orcid: 0009-0004-5169-4484
+    email: jdrengifoc@eafit.com
+    affiliations:
+      - name: EAFIT
+        city: Medellín
+  - name: Angel Samuel Suesca Rios
+    email: assuescar@eafit.edu.co
+    affiliations:
+      - name: Banco de la República
+        city: Medellín
+  - name: Mario Aguirre Posada
+    email: maguirrep@eafit.edu.co
+    affiliations:
+      - name: EAFIT
+        city: Medellín
+format: html
+editor: visual
+---
+
+# Introduction
+
+[*Se plantea una motivación del tema a trabajar, en particular se menciona por qué es importante el tema y cuál es el objetivo principal del estudio. Se debe mencionar los datos con los se van a trabajar (país o ciudad, período o año, población analizada...). En el último párrafo de la introducción se debe mencionar la estructura del documento, esto es, las secciones que componen el documento.*]{style="color:red;"}.
+
+# Literature Review
+
+[*Revisión de literatura: se debe hacer una revisión de literatura y en último párrafo mencionar cuál es el principal aporte del documento respecto a la literatura existente.*]{style="color:red;"}
+
+# Data and Empirical Evidence
+
+[*Se mencionan los datos utilizados con más detalle y se describen las estadísticas descriptivas de las variables más importantes a analizar*]{style="color:red;"}
+
+# Econometric Model
+
+[*plantear la ecuación del modelo a estimar y describir éste modelo: variable dependiente, independientes y error*]{style="color:red;"}
+
+# Results
+
+[*Descripción de los de resultados, deduciendo implicaciones*]{style="color:red;"}
+
+# Conclussions
+
+[*descripción de los principales resultados encontrados, implicaciones y discusión (implicaciones de política...)*]{style="color:red;"}
