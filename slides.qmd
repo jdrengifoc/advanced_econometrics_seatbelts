@@ -24,6 +24,7 @@ format:
     toc-title: "Agenda"
     toc-depth: 1
     slideNumber: true
+    theme: black
 footer: |
   <a href="paper.html" class="home-button">Home</a>
 editor: visual
