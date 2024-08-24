@@ -1,3 +1,4 @@
 /.quarto/
 _site
 _publish.yml
+.DS_store
