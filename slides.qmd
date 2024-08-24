@@ -20,31 +20,122 @@ author:
 format: 
   revealjs:
     chalkboard: true
+    toc: true
+    toc-title: "Agenda"
+    toc-depth: 1
+    slideNumber: true
 footer: |
   <a href="paper.html" class="home-button">Home</a>
 editor: visual
+bibliography: references.bib
 ---
 
-# Introduction
+# Motivación
 
-[*Se plantea una motivación del tema a trabajar, en particular se menciona por qué es importante el tema y cuál es el objetivo principal del estudio. Se debe mencionar los datos con los se van a trabajar (país o ciudad, período o año, población analizada...). En el último párrafo de la introducción se debe mencionar la estructura del documento, esto es, las secciones que componen el documento.*]{style="color:red;"}.
+[una o dos slides mostrando la importancia de estudio. Objetivo, contexto, planteamiento del problema, motivación, justificación (descripción de la importancia del problema analizado, para qué, por qué es importante el tema? Cifras?... etc)]{style="color:red;"}
 
-# Literature Review
+## Contexto y Justificación
 
-[*Revisión de literatura: se debe hacer una revisión de literatura y en último párrafo mencionar cuál es el principal aporte del documento respecto a la literatura existente.*]{style="color:red;"}
+-   Contexto
 
-# Data and Empirical Evidence
+-   Planteamiento del problema
 
-[*Se mencionan los datos utilizados con más detalle y se describen las estadísticas descriptivas de las variables más importantes a analizar*]{style="color:red;"}
+-   Motivación
 
-# Econometric Model
+-   Justificación
 
-[*plantear la ecuación del modelo a estimar y describir éste modelo: variable dependiente, independientes y error*]{style="color:red;"}
+## Objetivo
 
-# Results
+-   Objetivo
 
-[*Descripción de los de resultados, deduciendo implicaciones*]{style="color:red;"}
+# Contribución
 
-# Conclussions
+[una slide mencionando cuál es la **potencial** contribución del estudio]{style="color:red;"}
 
-[*descripción de los principales resultados encontrados, implicaciones y discusión (implicaciones de política...)*]{style="color:red;"}
+# Revisión de Literatura
+
+[*una o dos slides donde se referencien los estudios encontrados, cómo estos se relacionan con lo que usted hace y el hueco en esta literatura que se quiere llenar o qué puede ser diferente lo que usted hace respecto a la literatura.*]{style="color:red;"}
+
+## Revisión de Literatura
+
+| Autor        | Año | Hallazgos |
+|--------------|-----|-----------|
+| [@cohen2003] |     |           |
+|              |     |           |
+|              |     |           |
+
+: Table 1: This is a table caption that appears below the table.
+
+## Revisión de Literatura
+
+| Autor | Año | Hallazgos |
+|-------|-----|-----------|
+|       |     |           |
+|       |     |           |
+|       |     |           |
+
+: Revisión de literatura
+
+# Descripción de Datos
+
+[*una o dos slides describiendo de los datos utilizados en el análisis, el nombre de la encuesta o fuentes de información, el año, cuál es la unidad de observación a analizar (individuos, países, regiones, empresas...), algunos aspectos metodológicos (urbano-rural, países, ciudades…), si se piensa trabajar con una muestra particular (trabajadores entre 20 y 60 años…), el número de observaciones, plantear cuál sería la variable dependiente, la(s) variable(s) explicativa(s) relevante(s) y los controles*]{style="color:red;"}
+
+## Descripción de Datos
+
+## Descripción de Datos
+
+# Estadísticas Descriptivas
+
+[*dos o tres slides. Presentar estadísticas descriptivas que ayuden a entender el problema analizado. También se puede presentar estadísticas descriptivas generales (media, desviación estándar, min, max...) pero en el análisis se debe hacer una interpretación que ayuden a entender el problema analizado*]{style="color:red;"}
+
+## Estadísticas Descriptivas
+
+## Estadísticas Descriptivas
+
+## Estadísticas Descriptivas
+
+# Modelo Econométrico
+
+[*e debe describir matemáticamente el modelo econométrico, la var Y, las Xs y el método de estimación. Cual es la hipótesis o argumento al incluir las variables que eligió para explicar las variables dependiente*]{style="color:red;"}
+
+## Variables
+
+Tal vez una tabla de Variable, Notación, Hipótesis.
+
+## Modelo Econométrico
+
+$$\vec{y} = X\beta + \vec\epsilon$$
+
+# Resultados
+
+[*una o dos slides. Tablas de resultados. Describir los principales resultados, argumentar, ¿es coherente con lo que encontró en la revisión de literatura?*]{style="color:red;"}
+
+## Tabla de Resultados
+
+| Header 1    | Header 2    | Header 3    |
+|-------------|-------------|-------------|
+| Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3 |
+| Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3 |
+| Row 3 Col 1 | Row 3 Col 2 | Row 3 Col 3 |
+
+-   Observación 1
+
+-   Obsservación 2
+
+## Tabla de Resultados
+
+| Header 1    | Header 2    | Header 3    |
+|-------------|-------------|-------------|
+| Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3 |
+| Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3 |
+| Row 3 Col 1 | Row 3 Col 2 | Row 3 Col 3 |
+
+-   Observación 1
+
+-   Observación 2
+
+# Conclusiones
+
+[una o dos slides. Conclusiones más importantes de la investigación. **Implicaciones** en términos de efectos sobre la economía en general. **Limitaciones**, cómo puede mejorar lo que hizo, para hacer en un **futuro**]{style="color:red;"}
+
+# Referencias
