@@ -17,7 +17,9 @@ author:
     affiliations:
       - name: EAFIT
         city: Medellín
-format: html
+format: 
+  html:
+    df-print: kable
 editor: visual
 bibliography: references.bib
 ---
@@ -38,11 +40,17 @@ bibliography: references.bib
 
 -   [@stock2020introduction Exercise 10.2]
 
-    # Data and Empirical Evidence
+# Data and Empirical Evidence
 
 [*Se mencionan los datos utilizados con más detalle y se describen las estadísticas descriptivas de las variables más importantes a analizar*]{style="color:red;"}
 
 **Data:** A panel of 50 U.S. states plus the District of Columbia from 1983 to 1997 [@data_usseatbelts].
+
+```{r}
+library(pder)
+data("SeatBelt")
+head(SeatBelt)
+```
 
 # Econometric Model
 

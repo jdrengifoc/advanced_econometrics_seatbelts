@@ -26,6 +26,7 @@ format:
     slideNumber: true
     theme: black
     number-sections: true
+    df-print: kable
 footer: |
    <div class="custom-footer">
      <a href="paper.html" class="go-paper-button">Paper</a>
@@ -87,6 +88,12 @@ bibliography: references.bib
 [*una o dos slides describiendo de los datos utilizados en el análisis, el nombre de la encuesta o fuentes de información, el año, cuál es la unidad de observación a analizar (individuos, países, regiones, empresas...), algunos aspectos metodológicos (urbano-rural, países, ciudades…), si se piensa trabajar con una muestra particular (trabajadores entre 20 y 60 años…), el número de observaciones, plantear cuál sería la variable dependiente, la(s) variable(s) explicativa(s) relevante(s) y los controles*]{style="color:red;"}
 
 ## Descripción de Datos
+
+```{r}
+library(pder)
+data("SeatBelt")
+head(SeatBelt)
+```
 
 ## Descripción de Datos
 
