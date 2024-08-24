@@ -12,6 +12,6 @@ website:
 format:
   html:
     theme: 
-      dark: slate
       light: morph
+      dark: slate
         

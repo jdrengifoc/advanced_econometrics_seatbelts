@@ -25,8 +25,13 @@ format:
     toc-depth: 1
     slideNumber: true
     theme: black
+    number-sections: true
 footer: |
-  <a href="paper.html" class="home-button">Home</a>
+   <div class="custom-footer">
+     <a href="paper.html" class="go-paper-button">Paper</a>
+     <span style="display:inline-block; width: 200px;"></span>
+     <a href="#/1" class="go-toc-button">Agenda</a>
+   </div>
 editor: visual
 bibliography: references.bib
 ---
