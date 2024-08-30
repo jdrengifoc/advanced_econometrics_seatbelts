@@ -26,7 +26,7 @@ max_normalized <- max(processed_data$fatalities[processed_data$type == "Normaliz
 scale_factor <- max_raw / max_normalized
 
 # Ahora creamos el gráfico
-ggplot(processed_data, aes(x = year, y = fatalities, color = category, linetype = type)) +
+plot1 <- ggplot(processed_data, aes(x = year, y = fatalities, color = category, linetype = type)) +
   geom_line(data = ~ filter(., type == "Raw")) +
   geom_line(data = ~ filter(., type == "Normalized"), aes(y = fatalities * scale_factor)) +
   scale_x_continuous(breaks = seq(1983, 1998, by = 1)) +
@@ -44,3 +44,10 @@ ggplot(processed_data, aes(x = year, y = fatalities, color = category, linetype 
                      labels = c("Occupant", "Non-occupant", 
                                 "Occupant (Normalized)", "Non-occupant (Normalized)")) +
   scale_linetype_manual(values = c("Raw" = "solid", "Normalized" = "dashed"))
+
+
+
+# Guardar la gráfica
+ggsave(filename = "Replication/figure1.png",
+       plot = plot1,
+       width = 10, height = 6, dpi = 300,  bg = "white")

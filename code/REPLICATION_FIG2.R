@@ -5,7 +5,7 @@ library(tidyr)
 data("SeatBelt")
 head(SeatBelt)
 
-SeatBelt %>% 
+plot2 <- SeatBelt %>% 
   select(year, usage) %>% 
   group_by(year) %>% 
   summarise(usage = mean(usage, na.rm = T)) %>% 
@@ -19,3 +19,7 @@ SeatBelt %>%
   theme_minimal() +
   theme()
 
+# Guardar la gráfica
+ggsave(filename = "Replication/figure2.png",
+       plot = plot2,
+       width = 10, height = 6, dpi = 300,  bg = "white")
