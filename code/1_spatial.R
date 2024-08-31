@@ -40,9 +40,9 @@ for (outcome in outcomes) {
     outcome_min <- min(df_plot[[outcome]], na.rm = T)
     df_plot <- df_plot %>% 
       mutate(!!sym(outcome) := (!!sym(outcome) - outcome_min) / diff(outcome_range))
-    print(range(df_plot[[outcome]]))
+    
     params <- list(
-      title = sprintf('%s in %d', titles[[outcome]], selected_year),
+      title = selected_year,#sprintf('%s in %d', titles[[outcome]], selected_year),
       subtitle = NULL,
       legend.title = NULL,
       # caption = sprintf("Fatalaties per VMT between %s.", outcome_range %>% 
@@ -69,9 +69,9 @@ for (outcome in outcomes) {
         plot.margin = unit(1*c(1,1,1,1),"cm"),
         plot.caption = element_text(size = 12, colour = "grey30", hjust = -0.1, vjust = -5),
         plot.subtitle = element_text(size = 12, face = "italic", colour = "grey40", hjust = 0.5),
-        plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        plot.title = element_text(size = 24, face = "bold", hjust = 0.5),
         legend.title = element_text(size = 12, face="bold"),
-        legend.text = element_text(size = 10),
+        legend.text = element_text(size = 16),
         legend.position = 'None',
         axis.title = element_blank(),
         axis.ticks = element_blank(),

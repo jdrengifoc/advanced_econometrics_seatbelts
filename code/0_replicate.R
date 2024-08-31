@@ -2,6 +2,7 @@ library(pder)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(stringr)
 library(stargazer)
 
 root_folder <- '1_panel_data/advanced_econometrics_seatbelts'
@@ -39,8 +40,7 @@ ggplot(processed_data, aes(x = year, y = fatalities, color = category, linetype 
       breaks = seq(0, 45e3, by = 5e3)
       )
     ) +
-  labs(x = "Year",
-       title = "FIGURE 1. TOTAL OCCUPANT AND NONOCCUPANT FATALITIES") +
+  labs(x = "Year") +
   theme_minimal() +
   theme(
     legend.position = "top",
@@ -116,8 +116,7 @@ ggplot(processed_data, aes(x = year, y = fatalities, color = category, linetype 
       breaks = seq(0, 45e3, by = 5e3)
     )
   ) +
-  labs(x = "Year",
-       title = "AVERAGE SEATBELT USAGE AND OCCUPANT AND NONOCCUPANT FATALITIES") +
+  labs(x = "Year") +
   theme_minimal(14) +
   theme(
     legend.position = "top",
@@ -159,8 +158,7 @@ SeatBelt %>%
     "Secondary enforcement" = "#FFD6A2"
   )) +
   scale_y_continuous(minor_breaks = seq(0, 51, 2)) +
-  labs(x = "Year", y = "No. of States",
-       title = "LEGISLATION OVER TIME") +
+  labs(x = "Year", y = "No. of States") +
   theme_minimal(14) +
   guides(
     fill = guide_legend(nrow = 2, byrow = TRUE)
@@ -201,7 +199,6 @@ logaritmics <- c('original' = F, log = T)
 # Preallocate tests.
 sig_levels <- c(0.01, 0.05, 0.1)
 tests <- list(relevant_instruments = NULL, hausman = NULL)
-tests$relevant_instruments
 
 for (outcome in outcomes) {
   for (i in 1:length(logaritmics)) {
@@ -264,8 +261,8 @@ for (outcome in outcomes) {
               add.lines = list(c("Year FE", "Yes", "Yes", "Yes"),
                                c("State FE", "No", "Yes", "Yes")),
               digits = 4,
-              type = "text",
-              out = sprintf('%s/results/tables/%s-%s.txt',
+              type = "latex",
+              out = sprintf('%s/results/tables/%s-%s.tex',
                             root_folder, outcome, names(logaritmic))
     ) 
   }
@@ -310,8 +307,8 @@ stargazer(reg_ols, reg_re, reg_fe,
                            c("State FE", "No", "No", "Yes"),
                            c("Random Effects", "No", "Yes", "No")),
           digits = 4,
-          type = "text",
-          out = file.path(root_folder, 'results/tables/seatbelt_usage.txt')
+          type = "latex",
+          out = file.path(root_folder, 'results/tables/seatbelt_usage.tex')
 ) 
 
 # Haussman test
