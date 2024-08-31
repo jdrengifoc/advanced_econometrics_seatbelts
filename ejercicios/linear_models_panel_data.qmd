@@ -26,6 +26,7 @@ cita [@endres2019]
 {r warnings = FALSE}
 
 # Modelos de datos panel
+
 ```{r}
 rm(list=ls(all=TRUE))
 # Cargar paquetes necesarios
@@ -67,6 +68,7 @@ data <- SeatBelt %>%
     belt_law_primary_after_secondary = dsp
   )
 ```
+
 ```{r}
 
 # Resumen estadístico de las variables numéricas
@@ -160,6 +162,7 @@ is.pbalanced(data) ## balanceado
 data <-  pdata.frame(data, c("state","year"))
 attach(data)
 ```
+
 ```{r}
 # Pool OLS
 pool <- plm(fatalities_occ ~ age + belt_usage + violent_crime + unemployment + income +pct_black+pct_hispanic , data = data, model = "pooling", effect= "twoway")
@@ -185,6 +188,7 @@ pwtest(fatalities_occ ~ age + belt_usage + violent_crime + unemployment + income
 # significant difference across units (i.e. no panel effect)
 plmtest(pool, type="bp")
 ```
+
 ```{r}
 fe <- plm(fatalities_occ ~ age + belt_usage + violent_crime + unemployment + income +pct_black+pct_hispanic, 
           data = data, model = "within", effect = "twoway")

@@ -2,54 +2,61 @@ library(pder)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
-data("SeatBelt")
-head(SeatBelt)
+library(stargazer)
 
-SeatBelt %>% 
-  select(year, farsocc, farsnocc) %>% 
+root_folder <- '1_panel_data/advanced_econometrics_seatbelts'
+data("SeatBelt")
+
+# FIGURE 1.—TOTAL OCCUPANT AND NONOCCUPANT FATALITIES ---------------------
+processed_data <- SeatBelt %>% 
+  mutate(vmt = vmtrural + vmturban,
+         farsocc_norm = farsocc / vmt,
+         farsnocc_norm = farsnocc / vmt) %>%
+  select(year, farsocc, farsnocc, farsocc_norm, farsnocc_norm) %>% 
   pivot_longer(cols = starts_with('fars'), 
                names_to = 'category', values_to = 'fatalities') %>% 
   group_by(year, category) %>% 
-  summarise(fatalities = sum(fatalities)) %>% 
-  ggplot(aes(x = year, y = fatalities, color = category)) +
-  geom_line() +
-  scale_x_continuous(breaks = seq(1983, 1998, by = 1)) +
-  scale_y_continuous(breaks = seq(0, 45e3, by = 5e3), 
-                     limits = c(0, 45e3)) +
-  labs(x = "Year", y = "Number of fatalities",
-       title = "FIGURE 1.—TOTAL OCCUPANT AND NONOCCUPANT FATALITIES") +
-  theme_minimal() +
-  theme()
-
-
-library(stringr)
-SeatBelt %>% 
-  mutate(V = vmtrural + vmturban,
-         farsocc_norm = farsocc / V,
-         farsnocc_norm = farsnocc / V) %>%
-  select(year, farsocc, farsnocc, farsocc_norm, farsnocc_norm) %>% 
-  pivot_longer(cols = c(starts_with('fars'), ends_with('_norm')), 
-               names_to = 'category', values_to = 'fatalities') %>% 
-  group_by(year, category) %>% 
   summarise(fatalities = sum(fatalities), .groups = 'drop') %>% 
-  mutate(type = if_else(str_detect(category, "_norm"), "Normalized", "Raw")) %>%
-  ggplot(aes(x = year, y = fatalities, color = category, linetype = type)) +
-  geom_line() +
-  scale_x_continuous(breaks = seq(1983, 1998, by = 1)) +
-  scale_y_continuous(trans = 'log10',
-                     labels = scales::label_number(accuracy = 0.1),
-                     breaks = scales::breaks_log()) +
-  labs(x = "Year", y = "Number of fatalities (log scale)",
-       title = "FIGURE 1.—TOTAL OCCUPANT AND NONOCCUPANT FATALITIES",
-       subtitle = "Raw and Normalized by Total Vehicle Miles Traveled") +
-  theme_minimal() +
-  theme(legend.position = "bottom") +
-  scale_color_manual(values = c("farsocc" = "blue", "farsnocc" = "red",
-                                "farsocc_norm" = "lightblue", "farsnocc_norm" = "pink"),
-                     labels = c("Occupant", "Non-occupant", 
-                                "Occupant (Normalized)", "Non-occupant (Normalized)")) +
-  scale_linetype_manual(values = c("Raw" = "solid", "Normalized" = "dashed"))
+  mutate(
+    type = if_else(str_detect(category, "_norm"), "Normalized", "Raw"),
+    category = str_replace(category, '_norm', ''))
 
+# Calculamos los factores de escala fuera de ggplot
+max_raw <- max(processed_data$fatalities[processed_data$type == "Raw"])
+max_normalized <- max(processed_data$fatalities[processed_data$type == "Normalized"])
+scale_factor <- max_raw / max_normalized
+
+# Creamos el gráfico
+ggplot(processed_data, aes(x = year, y = fatalities, color = category, linetype = type)) +
+  geom_line(data = ~ filter(., type == "Normalized")) +
+  geom_line(data = ~ filter(., type == "Raw"), aes(y = fatalities / scale_factor)) +
+  scale_x_continuous(breaks = seq(1983, 1998, by = 1)) +
+  scale_y_continuous(
+    breaks = seq(0, 1.25, by = 0.25), limits = c(0, 1.25),
+    name = "Fatalities per MVV",
+    sec.axis = sec_axis(
+      ~ . * scale_factor, name = "Number of fatalities",
+      breaks = seq(0, 45e3, by = 5e3)
+      )
+    ) +
+  labs(x = "Year",
+       title = "FIGURE 1. TOTAL OCCUPANT AND NONOCCUPANT FATALITIES") +
+  theme_minimal() +
+  theme(
+    legend.position = "top",
+    legend.title = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
+    ) +
+  scale_color_manual(values = c("farsocc" = "#47D134", "farsnocc" = "#922FD6"),
+                     labels = c("Non-occupant", "Occupant",
+                                "Normalized", "Number"))
+  # ggsave(filename = "1_panel_data//figure1.png",
+  #        width = 10, height = 6, dpi = 300),  bg = "white")
+
+
+
+# FIGURE 2 ----------------------------------------------------------------
 
 SeatBelt %>% 
   select(year, usage) %>% 
@@ -61,7 +68,126 @@ SeatBelt %>%
   scale_y_continuous(breaks = seq(0, 0.9, by = 0.1), 
                      limits = c(0, 0.9)) +
   labs(x = "Year", y = "Usage rate",
-       title = 'FIGURE 2.—AVERAGE SEAT BELT USAGE OVER TIME') +
+       title = 'FIGURE 2. AVERAGE SEAT BELT USAGE OVER TIME') +
   theme_minimal() +
-  theme()
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+  )
+
+
+# FIGURE 3 ----------------------------------------------------------------
+
+SeatBelt %>% 
+  select(year, ds, dp, dsp) %>%
+  group_by(year) %>% 
+  summarise(ds = sum(ds - dsp), dp = sum(dp), dsp = sum(dsp)) %>% ungroup %>% 
+  mutate(dnl = 51 - ds - dp - dsp) %>% 
+  pivot_longer(cols = starts_with('d'), 
+               names_to = 'category', values_to = 'value') %>% 
+  mutate(category = recode(category, 
+                           dnl = "No law",
+                           dp = "Primary enforcement",
+                           ds = "Secondary enforcement",
+                           dsp = "Primary preeced by secondary"
+                           )) %>% 
+  ggplot(aes(x = as.factor(year), y = value, fill = category)) +
+  geom_bar(stat = 'identity') +
+  scale_fill_manual(values = c(
+    "No law" = "#CECECE",
+    "Primary enforcement" = "#005AB4",
+    "Primary preeced by secondary" = "#00C8E7",
+    "Secondary enforcement" = "#FFD6A2"
+  )) +
+  scale_y_continuous(minor_breaks = seq(0, 51, 2)) +
+  labs(x = "Year", y = "No. of States",
+       title = "FIGURE 3. LEGISLATION OVER TIME") +
+  theme_minimal() +
+  guides(
+    fill = guide_legend(nrow = 2, byrow = TRUE)
+  ) +
+  theme(
+    legend.position = "top",
+    legend.title = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
+  )
+
+
+# Panel regressions -------------------------------------------------------
+processed_data <- SeatBelt %>% 
+  mutate(vmt = vmtrural + vmturban,
+         farsocc = farsocc / vmt,
+         farsnocc = farsnocc / vmt) %>% 
+  select(-vmt) %>% pdata.frame(c("state","year"))
+
+possible_covariates <- c(
+  "Seat belt usage", "Log(seat belt usage)", "Log(median income)", 
+  "Log(unemployment rate)", "Log(mean age)", "Log(% blacks)", 
+  "Log(% Hispanics)", "Log(traffic density rural)", 
+  "Log(traffic density urban)", "Log(violent crimes)", "Log(property crimes)", 
+  "Log(VMT rural)", "Log(VMT urban)", "Log(fuel tax)", "65-mph speed limit", 
+  "70-mph speed limit or above", "MLDA of 21 years", "BAC 0.08")
+log_controls <- c('percapin', 'unemp', 'meanage', 'precentb', 'precenth', 
+                  'densurb', 'densrur', 'viopcap', 'proppcap', 'vmtrural',
+                  'vmturban', 'fueltax')
+dummy_controls <- c('lim65', 'lim70p', 'mlda21', 'bac08')
+instruments <- c('ds', 'dp', 'dsp')
+
+outcomes <- c('farsocc', 'farsnocc')
+logaritmics <- c('original' = F, log = T)
+logaritmics[1]
+outcome <- outcomes[2]
+logaritmic <- logaritmics[1]
+for (outcome in outcomes) {
+  for (i in 1:length(logaritmics)) {
+    logaritmic <- logaritmics[i]
+    # Process data for regression.
+    reg_data <- processed_data %>%
+      mutate(across(all_of(log_controls), log))
+    if (logaritmic) {
+      reg_data <- reg_data %>% 
+        mutate(across(all_of(c('usage', outcome)), log))
+    }
+    # Write regression formulas.
+    formula <- sprintf('%s ~ usage + %s + %s -1', 
+                       outcome, 
+                       paste(log_controls, collapse = ' + '),
+                       paste(dummy_controls, collapse = ' + '))
+    formula_iv <- sprintf('%s | %s + %s + %s', 
+                          formula,
+                          paste(instruments, collapse = ' + '),
+                          paste(log_controls, collapse = ' + '),
+                          paste(dummy_controls, collapse = ' + '))
+    
+    # OLS
+    reg_ols <- plm(formula = formula, data = reg_data,
+                   model = "within", effect = "time") #%>% summary()
+    # Fixed Effects
+    reg_fe <- plm(formula = formula, data = reg_data,
+                  model = "within", effect = "twoway")
+    # IV
+    reg_iv <- plm(formula = formula_iv, data = reg_data,
+                  model = "within", effect = "twoway")
+    
+    # Save results.
+    stargazer(reg_ols, reg_fe, reg_iv,
+              dep.var.labels = outcome,
+              covariate.labels = possible_covariates[-which(logaritmic == logaritmics)],
+              column.labels = c("OLS", "Fixed Effects", "IV"),
+              omit.stat = c("f", "ser", 'rsq'), # Omit F-statistic and standard error
+              add.lines = list(c("Year FE", "Yes", "Yes", "Yes"),
+                               c("State FE", "No", "Yes", "Yes")),
+              digits = 4,
+              type = "latex",
+              out = sprintf('%s/results/tables/%s-%s.txt',
+                            root_folder, outcome, names(logaritmic))
+    ) 
+  }
+}
+
+
+
+
 

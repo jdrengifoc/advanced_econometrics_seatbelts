@@ -46,6 +46,8 @@ bibliography: references.bib
 
 **Data:** A panel of 50 U.S. states plus the District of Columbia from 1983 to 1997 [@data_usseatbelts].
 
+- Figura 1. tres mapas en diferentes momentos en el tiempo (si hay suficiente cambio, si no hay tanto, poner solo
+
 ```{r}
 library(pder)
 data("SeatBelt")
