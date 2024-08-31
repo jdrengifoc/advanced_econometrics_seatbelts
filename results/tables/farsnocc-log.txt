@@ -24,10 +24,10 @@ Log(% blacks)               0.0737***    -0.3910**   -0.3857**
 Log(% Hispanics)            0.2060***     0.1728      0.1770  
                              (0.0192)    (0.1570)    (0.1574) 
                                                               
-Log(traffic density rural)  0.4154***     -0.2390     -0.2234 
+Log(traffic density urban)  0.4154***     -0.2390     -0.2234 
                              (0.0766)    (0.1763)    (0.1777) 
                                                               
-Log(traffic density urban)  0.0986***     -0.0654     -0.0567 
+Log(traffic density rural)  0.0986***     -0.0654     -0.0567 
                              (0.0281)    (0.2781)    (0.2789) 
                                                               
 Log(violent crimes)         0.3130***     0.0884      0.0866  

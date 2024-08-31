@@ -51,8 +51,6 @@ ggplot(processed_data, aes(x = year, y = fatalities, color = category, linetype 
   scale_color_manual(values = c("farsocc" = "#47D134", "farsnocc" = "#922FD6"),
                      labels = c("Non-occupant", "Occupant",
                                 "Normalized", "Number"))
-  # ggsave(filename = "1_panel_data//figure1.png",
-  #        width = 10, height = 6, dpi = 300),  bg = "white")
 
 
 
@@ -75,6 +73,69 @@ SeatBelt %>%
     panel.grid.minor.x = element_blank(),
     panel.grid.minor.y = element_blank(),
   )
+
+
+# FIgure 1 + 2 ------------------------------------------------------------
+
+processed_data <- SeatBelt %>% 
+  mutate(vmt = vmtrural + vmturban,
+         farsocc_norm = farsocc / vmt,
+         farsnocc_norm = farsnocc / vmt) %>%
+  select(year, farsocc, farsnocc, farsocc_norm, farsnocc_norm) %>% 
+  pivot_longer(cols = starts_with('fars'), 
+               names_to = 'category', values_to = 'fatalities') %>% 
+  group_by(year, category) %>% 
+  summarise(fatalities = sum(fatalities), .groups = 'drop') %>% 
+  mutate(
+    type = if_else(str_detect(category, "_norm"), "Normalized", "Raw"),
+    category = str_replace(category, '_norm', '')) %>% 
+  bind_rows(
+    SeatBelt %>% 
+      select(year, usage) %>% 
+      group_by(year) %>% 
+      summarise(usage = mean(usage, na.rm = T)) %>% 
+      mutate(type = 'usage', category = 'usage') %>% rename(fatalities = usage)
+  )
+
+# Calculamos los factores de escala fuera de ggplot
+max_raw <- max(processed_data$fatalities[processed_data$type == "Raw"])
+max_normalized <- max(processed_data$fatalities[processed_data$type == "Normalized"])
+scale_factor <- max_raw / max_normalized
+
+# Creamos el gráfico
+ggplot(processed_data, aes(x = year, y = fatalities, color = category, linetype = type)) +
+  geom_line(data = ~ filter(., type == "usage"), linetype = 'solid') +
+  geom_line(data = ~ filter(., type == "Normalized")) +
+  geom_line(data = ~ filter(., type == "Raw"), aes(y = fatalities / scale_factor)) +
+  scale_x_continuous(breaks = seq(1983, 1998, by = 1)) +
+  scale_y_continuous(
+    breaks = seq(0, 1.25, by = 0.25), limits = c(0, 1.25),
+    name = "Fatalities per MVV / ASU",
+    sec.axis = sec_axis(
+      ~ . * scale_factor, name = "Number of fatalities",
+      breaks = seq(0, 45e3, by = 5e3)
+    )
+  ) +
+  labs(x = "Year",
+       title = "AVERAGE SEATBELT USAGE AND OCCUPANT AND NONOCCUPANT FATALITIES") +
+  theme_minimal(14) +
+  theme(
+    legend.position = "top",
+    legend.title = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
+  ) +
+  scale_color_manual(values = c("farsocc" = "#47D134", "farsnocc" = "#922FD6", 'usage' = 'black'),
+                     labels = c("Non-occupant", "Occupant", "Average seatbelt usage (ASU)")) +
+  guides(
+    color = guide_legend(nrow = 2, byrow = TRUE),    # Agrupa en dos filas
+    linetype = guide_legend(nrow = 2, byrow = TRUE)  # Agrupa en dos filas
+  ) %>% 
+  ggsave(file.path(root_folder, 'results/figures/motivation.png'),
+         width = 10, height = 6, dpi = 300))
+
+# ggsave(filename = "1_panel_data//figure1.png",
+#        width = 10, height = 6, dpi = 300),  bg = "white")
 
 
 # FIGURE 3 ----------------------------------------------------------------
@@ -125,8 +186,8 @@ processed_data <- SeatBelt %>%
 possible_covariates <- c(
   "Seat belt usage", "Log(seat belt usage)", "Log(median income)", 
   "Log(unemployment rate)", "Log(mean age)", "Log(% blacks)", 
-  "Log(% Hispanics)", "Log(traffic density rural)", 
-  "Log(traffic density urban)", "Log(violent crimes)", "Log(property crimes)", 
+  "Log(% Hispanics)", "Log(traffic density urban)", 
+  "Log(traffic density rural)", "Log(violent crimes)", "Log(property crimes)", 
   "Log(VMT rural)", "Log(VMT urban)", "Log(fuel tax)", "65-mph speed limit", 
   "70-mph speed limit or above", "MLDA of 21 years", "BAC 0.08")
 log_controls <- c('percapin', 'unemp', 'meanage', 'precentb', 'precenth', 
@@ -137,9 +198,6 @@ instruments <- c('ds', 'dp', 'dsp')
 
 outcomes <- c('farsocc', 'farsnocc')
 logaritmics <- c('original' = F, log = T)
-logaritmics[1]
-outcome <- outcomes[2]
-logaritmic <- logaritmics[1]
 for (outcome in outcomes) {
   for (i in 1:length(logaritmics)) {
     logaritmic <- logaritmics[i]
@@ -180,7 +238,7 @@ for (outcome in outcomes) {
               add.lines = list(c("Year FE", "Yes", "Yes", "Yes"),
                                c("State FE", "No", "Yes", "Yes")),
               digits = 4,
-              type = "latex",
+              type = "text",
               out = sprintf('%s/results/tables/%s-%s.txt',
                             root_folder, outcome, names(logaritmic))
     ) 
