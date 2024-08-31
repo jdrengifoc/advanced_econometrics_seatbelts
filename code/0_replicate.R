@@ -161,7 +161,7 @@ SeatBelt %>%
   scale_y_continuous(minor_breaks = seq(0, 51, 2)) +
   labs(x = "Year", y = "No. of States",
        title = "LEGISLATION OVER TIME") +
-  theme_minimal() +
+  theme_minimal(14) +
   guides(
     fill = guide_legend(nrow = 2, byrow = TRUE)
   ) +
@@ -180,6 +180,8 @@ processed_data <- SeatBelt %>%
          farsocc = farsocc / vmt,
          farsnocc = farsnocc / vmt) %>% 
   select(-vmt) %>% pdata.frame(c("state","year"))
+
+# Tables 2-3 --------------------------------------------------------------
 
 possible_covariates <- c(
   "Seat belt usage", "Log(seat belt usage)", "Log(median income)", 
@@ -232,11 +234,11 @@ for (outcome in outcomes) {
               dep.var.labels = outcome,
               covariate.labels = possible_covariates[-which(logaritmic == logaritmics)],
               column.labels = c("OLS", "Fixed Effects", "IV"),
-              omit.stat = c("f", "ser", 'rsq'), # Omit F-statistic and standard error
+              omit.stat = c("f", "ser", 'rsq'),
               add.lines = list(c("Year FE", "Yes", "Yes", "Yes"),
                                c("State FE", "No", "Yes", "Yes")),
               digits = 4,
-              type = "text",
+              type = "latex",
               out = sprintf('%s/results/tables/%s-%s.txt',
                             root_folder, outcome, names(logaritmic))
     ) 
@@ -244,6 +246,10 @@ for (outcome in outcomes) {
 }
 
 
+reg_fe <- plm(formula = formula, data = reg_data,
+              model = "within", effect = "twoway")
 
-
-
+reg_re <- plm(formula = formula, data = reg_data,
+              model = "random")
+hausman_test <- phtest(reg_fe, reg_re)
+hausman_test$p.value
