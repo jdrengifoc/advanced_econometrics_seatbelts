@@ -198,6 +198,11 @@ instruments <- c('ds', 'dp', 'dsp')
 
 outcomes <- c('farsocc', 'farsnocc')
 logaritmics <- c('original' = F, log = T)
+# Preallocate tests.
+sig_levels <- c(0.01, 0.05, 0.1)
+tests <- list(relevant_instruments = NULL, hausman = NULL)
+tests$relevant_instruments
+
 for (outcome in outcomes) {
   for (i in 1:length(logaritmics)) {
     logaritmic <- logaritmics[i]
@@ -221,13 +226,34 @@ for (outcome in outcomes) {
     
     # OLS
     reg_ols <- plm(formula = formula, data = reg_data,
-                   model = "within", effect = "time") #%>% summary()
+                   model = "within", effect = "time")
+    # Random Effects
+    reg_re <- plm(formula = formula, data = reg_data,
+                  model = "random")
     # Fixed Effects
     reg_fe <- plm(formula = formula, data = reg_data,
                   model = "within", effect = "twoway")
     # IV
     reg_iv <- plm(formula = formula_iv, data = reg_data,
                   model = "within", effect = "twoway")
+    
+    # Random vs Fixed Effects.
+    hausman_test <- phtest(reg_fe, reg_re)[['p.value']] <= sig_levels
+    tests$hausman <- rbind(tests$hausman, hausman_test)
+    # Relevant instruments.
+    formula_instruments_test <- sprintf(
+      'usage ~ %s + %s + %s', 
+      paste(instruments, collapse = ' + '),
+      paste(log_controls, collapse = ' + '),
+      paste(dummy_controls, collapse = ' + ')
+    )
+    
+    relevant_instruments_test <- car::linearHypothesis(
+      lm(formula = formula_instruments_test, data = reg_data), 
+      hypothesis.matrix = paste0(instruments, ' = 0')
+    )[['Pr(>F)']][-1] <= sig_levels
+    tests$relevant_instruments <- rbind(tests$relevant_instruments, 
+                                        relevant_instruments_test)
     
     # Save results.
     stargazer(reg_ols, reg_fe, reg_iv,
@@ -238,29 +264,57 @@ for (outcome in outcomes) {
               add.lines = list(c("Year FE", "Yes", "Yes", "Yes"),
                                c("State FE", "No", "Yes", "Yes")),
               digits = 4,
-              type = "latex",
-              out = sprintf('%s/results/tables/%s-%s.tex',
+              type = "text",
+              out = sprintf('%s/results/tables/%s-%s.txt',
                             root_folder, outcome, names(logaritmic))
     ) 
   }
 }
 
 
+# TABLE 4 -----------------------------------------------------------------
+reg_data <- processed_data %>%
+  mutate(across(all_of(log_controls), log))
+outcome <- 'usage'
+formula <- sprintf('%s ~ %s + %s + %s -1', 
+                   outcome,
+                   paste(instruments, collapse = ' + '),
+                   paste(log_controls, collapse = ' + '),
+                   paste(dummy_controls, collapse = ' + '))
+
+# OLS
+reg_ols <- plm(formula = formula, data = reg_data,
+               model = "within", effect = "time")
+# Random Effects
+reg_re <- plm(formula = formula, data = reg_data, model = "random")
+# Fixed Effects
 reg_fe <- plm(formula = formula, data = reg_data,
               model = "within", effect = "twoway")
+reg_fe$coefficients %>% names %>% length
+possible_covariates <- c(
+  "Secondary enforcement", "Primary enforcement", 
+  "Secondary to primary enforcement", "Log(median income)", 
+  "Log(unemployment rate)", "Log(mean age)", "Log(% blacks)", 
+  "Log(% Hispanics)", "Log(traffic density urban)", 
+  "Log(traffic density rural)", "Log(violent crimes)", "Log(property crimes)", 
+  "Log(VMT rural)", "Log(VMT urban)", "Log(fuel tax)", "65-mph speed limit", 
+  "70-mph speed limit or above", "MLDA of 21 years", "BAC 0.08")
 
-reg_re <- plm(formula = formula, data = reg_data,
-              model = "random")
-hausman_test <- phtest(reg_fe, reg_re)
+possible_covariates %>% length
+stargazer(reg_ols, reg_re, reg_fe,
+          dep.var.labels = outcome,
+          covariate.labels = possible_covariates,
+          column.labels = c("OLS", "Random Effects", "Fixed Effects"),
+          omit.stat = c("f", "ser", 'rsq'),
+          add.lines = list(c("Year FE", "Yes", "No", "Yes"),
+                           c("State FE", "No", "No", "Yes"),
+                           c("Random Effects", "No", "Yes", "No")),
+          digits = 4,
+          type = "text",
+          out = file.path(root_folder, 'results/tables/seatbelt_usage.txt')
+) 
 
-formula_instruments_test <- sprintf(
-  'usage ~ %s + %s + %s', 
-  paste(instruments, collapse = ' + '),
-  paste(log_controls, collapse = ' + '),
-  paste(dummy_controls, collapse = ' + ')
-  )
+# Haussman test
+phtest(reg_fe, reg_re)[['p.value']]
 
-instruments
-car::linearHypothesis(lm(formula = formula_instruments_test, data = processed_data), 
-                      paste0(instruments, ' = 0'))
-summary(iv1_pool, diagnostics=TRUE)
+
