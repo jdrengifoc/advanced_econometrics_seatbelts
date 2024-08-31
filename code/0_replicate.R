@@ -130,12 +130,9 @@ ggplot(processed_data, aes(x = year, y = fatalities, color = category, linetype 
   guides(
     color = guide_legend(nrow = 2, byrow = TRUE),    # Agrupa en dos filas
     linetype = guide_legend(nrow = 2, byrow = TRUE)  # Agrupa en dos filas
-  ) %>% 
-  ggsave(file.path(root_folder, 'results/figures/motivation.png'),
-         width = 10, height = 6, dpi = 300))
-
-# ggsave(filename = "1_panel_data//figure1.png",
-#        width = 10, height = 6, dpi = 300),  bg = "white")
+  )
+  ggsave(filename = file.path(root_folder, 'results/figures/motivation_changes.png'),
+         width = 10, height = 6, dpi = 300, bg = "white")
 
 
 # FIGURE 3 ----------------------------------------------------------------
@@ -154,7 +151,7 @@ SeatBelt %>%
                            dsp = "Primary preeced by secondary"
                            )) %>% 
   ggplot(aes(x = as.factor(year), y = value, fill = category)) +
-  geom_bar(stat = 'identity') +
+  geom_bar(stat = 'identity', width = 0.5) +
   scale_fill_manual(values = c(
     "No law" = "#CECECE",
     "Primary enforcement" = "#005AB4",
@@ -163,7 +160,7 @@ SeatBelt %>%
   )) +
   scale_y_continuous(minor_breaks = seq(0, 51, 2)) +
   labs(x = "Year", y = "No. of States",
-       title = "FIGURE 3. LEGISLATION OVER TIME") +
+       title = "LEGISLATION OVER TIME") +
   theme_minimal() +
   guides(
     fill = guide_legend(nrow = 2, byrow = TRUE)
@@ -174,7 +171,8 @@ SeatBelt %>%
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank()
   )
-
+ggsave(filename = file.path(root_folder, 'results/figures/motivation_legislation.png'),
+       width = 10, height = 6, dpi = 300, bg = "white")
 
 # Panel regressions -------------------------------------------------------
 processed_data <- SeatBelt %>% 
