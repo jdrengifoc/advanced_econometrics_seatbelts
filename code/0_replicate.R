@@ -239,7 +239,7 @@ for (outcome in outcomes) {
                                c("State FE", "No", "Yes", "Yes")),
               digits = 4,
               type = "latex",
-              out = sprintf('%s/results/tables/%s-%s.txt',
+              out = sprintf('%s/results/tables/%s-%s.tex',
                             root_folder, outcome, names(logaritmic))
     ) 
   }
@@ -252,4 +252,15 @@ reg_fe <- plm(formula = formula, data = reg_data,
 reg_re <- plm(formula = formula, data = reg_data,
               model = "random")
 hausman_test <- phtest(reg_fe, reg_re)
-hausman_test$p.value
+
+formula_instruments_test <- sprintf(
+  'usage ~ %s + %s + %s', 
+  paste(instruments, collapse = ' + '),
+  paste(log_controls, collapse = ' + '),
+  paste(dummy_controls, collapse = ' + ')
+  )
+
+instruments
+car::linearHypothesis(lm(formula = formula_instruments_test, data = processed_data), 
+                      paste0(instruments, ' = 0'))
+summary(iv1_pool, diagnostics=TRUE)
