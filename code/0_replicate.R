@@ -172,7 +172,7 @@ SeatBelt %>%
 ggsave(filename = file.path(root_folder, 'results/figures/motivation_legislation.png'),
        width = 10, height = 6, dpi = 300, bg = "white")
 
-# Panel regressions -------------------------------------------------------
+  # Panel regressions -------------------------------------------------------
 processed_data <- SeatBelt %>% 
   mutate(vmt = vmtrural + vmturban,
          farsocc = farsocc / vmt,
