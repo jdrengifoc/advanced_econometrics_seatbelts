@@ -38,7 +38,6 @@ library(stargazer)
 data("SeatBelt")
 ```
 
-
 -   [*Los cuadros y gráficas deben tener titulo y ser enumeradas (por ejemplo, Cuadro 1, Cuadro 2, Gráfico 1, Gráfico 2,...) y llevar la fuente (por ejemplo, Fuente: Cálculos propios a partir del Censo Económico Cali, 2005; Fuente: Censo Económico Cali, 2005; Fuente: GEIH, 2010)*]{style="color:red;"}
 
 # Introduction
@@ -65,17 +64,11 @@ As mentioned before, the data employed for this paper was originally gather by @
 
 By its part, the number of fatalities was obtained from the *Fatalities Analysis Reporting System* (FARS). They divide the fatalities by occupants and non-occupants (pedestrians and byciclists). A limitation of this data to our design is that in some states, the compulsory laws of seat bealt usage is only for front seats, then one could argue that in those states, rear passengers should be consider as non-occupants. Potentially this could bias upward our estimates for TFVO. For the TFVN's estimates, the direction and presence of the bias is unknown as may be opposite effects through different mechanisms.
 
-
-
-
 The @fig-data-fatalities_usage presents the evolution of these variables in the period of analysis, where the black line refers to the SBUR, which increases over time as expected.
 
 Is worth noting that the TFVO and TFVN can adopt different forms, for instance, one could take the raw number of fatalities. Nevertheless, as shown by the @fig-data-fatalities_usage in the dashed lines, this measure does not exhibit a decreasing trend across years, as the vehicle population also increased. One solution is to normalize by vehicle miles traveled (VMT).[^1] The green and purples solid lines of @fig-data-fatalities_usage present the normalized fatalities, where clearly, the TFVO and TFVN decrease with time. In summary, the SBUR has a negative correlation with the TFVO and TFVN, however, we cannot conclude causality as it may be spurious by confounding variables such as national road safety campaigns and road infrastructure conditions. Besides, the variable
 
 [^1]: henceforth, the TFVO and TFVN will refer to the normalized values.
-
-
-
 
 ```{r}
 #| label: fig-data-fatalities_usage
@@ -144,7 +137,6 @@ library(pder)
 data("SeatBelt")
 head(SeatBelt)
 ```
-
 
 # Econometric Model
 

@@ -222,10 +222,10 @@ for (result_name in names(results)) {
 }
 df_hausman <- df_hausman %>% 
   mutate(significance = case_when(
-    p_value <= 0.001 ~ "FE***",
-    p_value <= 0.01 ~ "FE**",
-    p_value <= 0.05 ~ "FE*",
-    p_value <= 0.1 ~ "FE.",
+    p_value <= 0.001 ~ "***",
+    p_value <= 0.01 ~ "**",
+    p_value <= 0.05 ~ "*",
+    p_value <= 0.1 ~ ".",
     .default = ""
   ))
 
@@ -261,13 +261,14 @@ for (outcome in outcomes[-3]) {
   }
 }
 
-df %>% 
+df_lm_test <- df %>% 
   mutate(significance = case_when(
-    p_value <= 0.01 ~ "1%",
-    p_value <= 0.05 ~ "5%",
-    p_value <= 0.1 ~ "10%",
+    p_value <= 0.001 ~ "***",
+    p_value <= 0.01 ~ "**",
+    p_value <= 0.05 ~ "*",
+    p_value <= 0.1 ~ ".",
     .default = ""
-  )) %>% filter(loglog) %>% arrange(model, effect) %>% View#writexl::write_xlsx('pp.xlsx')
+  )) %>% filter(loglog) %>% arrange(model, effect)
 
 results$log_farsnocc$semfe %>% summary
 results$log_farsocc$fe %>% summary
@@ -326,8 +327,17 @@ results$log_farsocc$slxfe %>% summary
 
 # Results -----------------------------------------------------------------
 library(writexl, include.only = 'write_xlsx')
-df_hausman %>% filter(loglog) %>% select(-loglog) #%>%
+df_hausman %>% filter(loglog) %>% select(-p_value, -loglog) %>%
+  mutate(models = toupper(models),
+         outcome = recode(outcome, 
+                          farsocc = "Log(TFVO)", farsnocc = "Log(TFVN)")) %>% 
   write_xlsx(sprintf('%s/results/tables/spatial_hausman.xlsx', root_folder))
+
+df_lm_test %>% filter(loglog, model == 'within', effect == 'twoways') %>% 
+  select(-loglog, -model, -effect, -H1, -significance) %>% 
+  mutate(test = toupper(test),
+         outcome = recode(outcome, 
+                          farsocc = "Log(TFVO)", farsnocc = "Log(TFVN)")) #%>% 
   
 
 get_my_table <- function(model, n_digits = 2L, model_name = NULL){
