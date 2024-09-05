@@ -203,7 +203,7 @@ for (outcome in outcomes[-3]) {
 # Hausman -----------------------------------------------------------------
 
 sig_levels <- c(1, 5, 10) / 100
-models <- c('', 'sar', 'sem', 'sarar', 'sdm', 'sdem', 'slx')
+models <- c('ols', 'sar', 'sem', 'sarar', 'sdm', 'sdem', 'slx')
 df_hausman <- NULL
 for (result_name in names(results)) {
   ls <- results[[result_name]]
@@ -220,11 +220,12 @@ for (result_name in names(results)) {
     outcome = ls$outcome, loglog = ls$loglog, models, p_value = pvalues)
   df_hausman <- rbind(df_hausman, df0)
 }
-df_hausman %>% 
+df_hausman <- df_hausman %>% 
   mutate(significance = case_when(
-    p_value <= 0.01 ~ "1%",
-    p_value <= 0.05 ~ "5%",
-    p_value <= 0.1 ~ "10%",
+    p_value <= 0.001 ~ "FE***",
+    p_value <= 0.01 ~ "FE**",
+    p_value <= 0.05 ~ "FE*",
+    p_value <= 0.1 ~ "FE.",
     .default = ""
   ))
 
@@ -272,11 +273,6 @@ results$log_farsnocc$semfe %>% summary
 results$log_farsocc$fe %>% summary
 
 # results -----------------------------------------------------------------
-# Two way effects
-results$log_farsnocc$semfe %>% summary
-impacts()s <- impacts(sdmfe, listw = We, time=length(unique(datapanel$year)))
-
-
 lr_test <- function(unrestricted_model, restricted_model) {
   get_df <- function(model) {
     length(model$residuals) - length(model$coefficients)
@@ -329,6 +325,10 @@ results$log_farsocc$slxfe %>% summary
 
 
 # Results -----------------------------------------------------------------
+library(writexl, include.only = 'write_xlsx')
+df_hausman %>% filter(loglog) %>% select(-loglog) #%>%
+  write_xlsx(sprintf('%s/results/tables/spatial_hausman.xlsx', root_folder))
+  
 
 get_my_table <- function(model, n_digits = 2L, model_name = NULL){
   get_covariates <- function(model) {
@@ -414,75 +414,5 @@ for (outcome in names(ls_models)) {
   df %>%  mutate(covariate = rep(covariates_labels, each = 2)) %>% 
     mutate(covariate = if_else(type == 'se', "", covariate)) %>% 
     select(-type) %>%
-    writexl::write_xlsx(sprintf('%s/results/tables/spatial_%s.xlsx', root_folder, outcome))
+    write_xlsx(sprintf('%s/results/tables/spatial_%s.xlsx', root_folder, outcome))
 }
-
-
-# lab ---------------------------------------------------------------------
-
-pooltest(results$pooling, results$fe)
-# Tests para efectos individuales y tiempo
-plmtest(results$pooling, effect = "twoway", type = "bp")
-# Comparando el pooling y el Within
-pFtest(results$pooling, results$fe)
-
-# Test de efectos inobservables
-# Ho: Var_effijos=0 -> Pooling
-# Ha: Var_effijos<>0 -> efectos aleatorios
-pwtest(get_formula(outcome, controls), data = datapanel)
-
-# Tests de Baltagi BH, Song SH, Koh W (2003). Testing Panel Data Regression Models with Spatial
-# Error Correlation. Journal of Econometrics, 117, 123-150:
-# LM1: Ho: Var_effijos=0: no efectos aleatorios asumiendo no correlaci?n espacial
-# LM2: Ho: rho=0: no correlaci?n espacial asumiendo no efectos aleatorios
-# SLM1: versi?n estandarizada de LM1
-# SLM2: versi?n estandarizada de LM2
-# LMH: Ho: rho=Var_effijos=0: no existen efectos espaciales ni efectos aleatorios
-# CLMlambda: Ho: rho=0: no correlaci?n espacial asumiendo la posible existencia
-# de efectos aleatorios (Var_effijos puede o no puede ser cero)
-# CLMmu: Ho: Var_effijos=0: no efectos aleatorios asumiendo la posibilidad de correlaci?n espacial
-# (rho puede o no puede ser cero)
-formula <- get_formula(outcome, controls)
-bsktest(x = formula, data = datapanel, listw = We, test = "LM1")
-
-bsktest(x = formula, data = datapanel, listw = We, test = "LM1", standardize=TRUE)
-
-bsktest(x = formula, data = datapanel, listw = We, test = "LM2")
-
-bsktest(x = formula, data = datapanel, listw = We, test = "LM2", standardize=TRUE)
-
-bsktest(x = formula, data = datapanel, listw = We, test = "LMH")
-
-bsktest(x = formula, data = datapanel, listw = We, test = "CLMlambda")
-
-bsktest(x = formula, data = datapanel, listw = We, test = "CLMmu")
-#####
-slmtest(get_formula(outcome, controls), data=datapanel,
-        listw = We, test="lml", model = model, effect = effect) ### TENEMOS DEPENDENCIA ESPACIAL EN LA VARIABLE ENDOGENA
-
-slmtest(get_formula(outcome, controls), data=datapanel,
-        listw = We, test="lme", model="within", effect = 'twoway') ### NO TENEMOS DEPENDENCIA ESPACIAL EN EL ERROR
-
-slmtest(get_formula(outcome, controls), data=datapanel,
-        listw = We, test="rlml", model="within", effect = 'twoway') 
-### TENEMOS DEPENDENCIA ESPACIAL EN LA VARIABLE ENDOGENA ROBUSTA A LA PRESENCIA DE DEPENDENCIA ESPACIAL EN EL ERROR
-slmtest(get_formula(outcome, controls), data=datapanel,
-        listw = We, test="rlme", model="within", effect = 'twoway')
-
-
-# Los test LM en un modelo de efectos fijos favorecen una espeficación SAR
-# Los test1 (SAR) y test2 (SEM) confirman el rechazo de la hipótesis que
-# estos dos términos (tomados independientemente) son nulos. Sin embargo,
-# se puede notar que el estadístico para el SAR es mayor que para el SEM.
-# Para poder concluir de una forma más creíble, los test robustos son usados
-# en la presencia de la especificación de la autocorrelación espacial.
-# Se observa que RLMlag y RLMerr son altamente significantes por lo que no es
-# posible discriminar la estructura de la autocorrelación espacial. Qué hacer?
-# - Estimar el SARAR
-# - Elegir aquel con es estadístico robusto más alto
-# - Compara criterios de información
-# - Seguir la propuesta de Elhorst (2010): Si el modelo MCO es rechazado en favor 
-# del spatial lag model, spatial error model o en favor de ambos modelos, entonces
-# el modelo Durbin espacial debería ser estimado
-
-# Si H0: theta = 0 y H0: theta + rho*beta = 0 son rechazadas =) modelo Durbin espacial
