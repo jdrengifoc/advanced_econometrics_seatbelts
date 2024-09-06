@@ -7,11 +7,8 @@ website:
     left: 
       - href: paper.qmd
         text: "Paper"
-      - href: slides.qmd
-        text: "Slides"
 format:
   html:
     theme: 
-      light: morph
-      dark: slate
+      light: cosmo
         

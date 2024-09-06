@@ -313,9 +313,11 @@ lr_test(results$log_farsnocc$sdmfe, results$log_farsnocc$sarfe)
 lr_test(results$log_farsnocc$sdmfe, results$log_farsnocc$slxfe)
 lr_test(results$log_farsnocc$sdmfe, results$log_farsnocc$semfe)
 # Seleccionamos SDM para no ocupados
-results$log_farsnocc$sdmfe %>% summary
-impacts(results$log_farsnocc$sdmfe, listw = We, 
-        time = length(unique(data_reg$year)))
+#results$log_farsnocc$sdmfe %>% summary
+sdm_impacts <- impacts(
+  results$log_farsnocc$sdmfe, listw = We, 
+  time = length(unique(data_reg$year))) %>% summary
+saveRDS(sdm_impacts, file.path(root_folder, 'results/tables/impacts.RData'))
 
 lr_test(results$log_farsocc$sdmfe, results$log_farsocc$sarfe)
 lr_test(results$log_farsocc$sdmfe, results$log_farsocc$slxfe)
@@ -337,7 +339,8 @@ df_lm_test %>% filter(loglog, model == 'within', effect == 'twoways') %>%
   select(-loglog, -model, -effect, -H1, -significance) %>% 
   mutate(test = toupper(test),
          outcome = recode(outcome, 
-                          farsocc = "Log(TFVO)", farsnocc = "Log(TFVN)")) #%>% 
+                          farsocc = "Log(TFVO)", farsnocc = "Log(TFVN)")) %>% 
+  write_xlsx(sprintf('%s/results/tables/spatial_LMtests.xlsx', root_folder))
   
 
 get_my_table <- function(model, n_digits = 2L, model_name = NULL){

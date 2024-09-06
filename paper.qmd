@@ -22,6 +22,9 @@ format:
     df-print: kable
     code-fold: true
     code-summary: "Show the code"
+    tbl-cap-location: top
+    fig-align: "center"
+    fig-cap-location: top
 editor: visual
 bibliography: references.bib
 ---
@@ -38,41 +41,60 @@ library(stargazer)
 data("SeatBelt")
 ```
 
--   [*Los cuadros y gráficas deben tener titulo y ser enumeradas (por ejemplo, Cuadro 1, Cuadro 2, Gráfico 1, Gráfico 2,...) y llevar la fuente (por ejemplo, Fuente: Cálculos propios a partir del Censo Económico Cali, 2005; Fuente: Censo Económico Cali, 2005; Fuente: GEIH, 2010)*]{style="color:red;"}
+```{css, echo = FALSE}
+.justify {
+  text-align: justify !important
+}
+```
+# 1. Introduction {#introduction}
+::: {.justify}
+This work is largely motivated by the study of @cohen2003, who used the same dataset as we do in this paper, as detailed in [section 3](#data). Their research thoroughly examined the impact of seat belt usage on traffic fatalities, employing panel data fixed effects models with various individual and state-level variables. However, they identified potential endogeneity issues, which they addressed by using law variables as instruments to correct for this bias.
 
-# Introduction
+Despite the study of road traffic fatalities has been studied since the XX century, it remains a critical issue worldwide, underscoring the importance of continued research in this area. According to the latest Global Status Report on Road Safety of @who2023roadsafety, approximately 1.19 million people die each year due to road traffic crashes, highlighting the severe human toll of these incidents. Indeed, is the leading cause of death for children and young adults (5–29 years), emphasizing the vulnerability of younger populations in traffic-related incidents. Besides, the economic impact of road traffic crashes is also profound, costing most countries around 3% of their gross domestic product (GDP) [@who2023roadsafety]. In summary, this statistics shows that the study of factors that can reduce road fatalities, such as seat belt usage, is of the utmost importance. By addressing this issue, our research contributes to the broader efforts to improve road safety and mitigate the substantial economic and societal costs associated with traffic accidents.
 
-[*Se plantea una motivación del tema a trabajar, en particular se menciona por qué es importante el tema y cuál es el objetivo principal del estudio. Se debe mencionar los datos con los se van a trabajar (país o ciudad, período o año, población analizada...). En el último párrafo de la introducción se debe mencionar la estructura del documento, esto es, las secciones que componen el documento.*]{style="color:red;"}
+As stated before, seat belt usage has been studied in the past and shown to reduce mortality in road accidents. However, past research has often overlooked the spatial dependency among geographic units, which can lead to bias estimates and innacurate conclusions regarding the effectiveness of policies. This estimation issue is a particular case of omitted variables bias, a critical challenge whose treatment has been fundamental to the literature. For instance, @cohen2003 discredited the *compensating behavior hypothesis* supported by @peltzman1975effects and @evans1986effectiveness, which suggests that higher seat belt usage could lead to an increase in non-occupant fatalities, as the drivers will feel more secure and will drive more boldly. Conversely, by controlling for endogeneity in seat belt usage, the results of @cohen2003 did not find significant impact on the road mortality for vulnerable road users (pedestrians an bicyclist). Hence, they concluded that increasing the usage rate did not affect the driving behavior.
 
-# Literature Review
+By discrediting the compensating behavior hypothesis, their research provided theoretical support for the implementation of stricter seat belt laws in the US, highlighting the importance of ongoing research to enhance road safety. This has been reflected in recent years by the widespread adoption of seat belts. However, legislation remains inconsistent in some regions. For example, while many countries have mandatory seat belt laws, their implementation is often low. This is the case of many countries in Middle East, Africa, and the Southeast of Asia. A notable example is Iran, where the seat belt usage rate is around 18% [@Kargar2023]. Additionally, while most locations have compulsory seat belt laws for front seat passengers, this is not always the case for rear seat passengers. In some extreme instances, such as in the state of New Hampshire, seat belt use is optional for individuals over 18 years old.
 
-[*Revisión de literatura: se debe hacer una revisión de literatura y en último párrafo mencionar cuál es el principal aporte del documento respecto a la literatura existente.*]{style="color:red;"}
+We propose that after controlling for spatial endogeneity, the *risk reduction hypothesis* fulfills, that is, an increase in the seat belt usage raises public awareness of road safety and encourages more cautious driving. As US is a federal country, the compulsory laws adoption and its heterogeneity in specifics is remarkably. This make the @cohen2003 dataset richer for causal inference, however, it also increases the likelihood of spatial dependency, as high mobility states can have different legislation that may have an effects on the road mortality between each other. Is worth noting that the compulsory laws are not the only mechanism that allows spatial dependency. State-to-state mobility also affect the traffic density and the exchange of populations with varying levels of risk aversion or risk tolerance, which can influence driving behavior across regions.
 
-**Provided literature:**
+In summary, while previous studies have examined the effectiveness of mandatory seat belt laws in reducing traffic fatalities, they overlook potential spatial spillovers, an aspect that we explore in this paper. We examine how these laws affect traffic fatalities while accounting for spatial dependencies across states. Using a comprehensive panel dataset covering all U.S. states from 1983 to 2000, we replicate @cohen2003 results and compare them to the results obtained by employing spatial models that aim to capture potential spillover effects and regional patterns.
 
--   [@cohen2003]
+The contribution of our analysis is at least twofold. First, by incorporating spatial econometrics, we can address several key issues: To what extent do spatial dependencies exist? How does accounting for these spatial relationships affect estimates of the laws' impact on traffic fatalities? Second, we provide an alternative framework for testing the compensating behavior hypothesis proposed by @peltzman1975effects.
 
--   [@stock2020introduction Exercise 10.2]
+The remainder of this paper is organized as follows: [section 2](#literature) provides an overview of the literature on seat belt laws, safety regulations, and fatalities relationships to other traffic mobility variables. [Section 3](#data) details the data, exhibits descriptive statistics and provides the empirical strategy. [Section 4](#model) describes the spatial econometric models and the benchmark panel data methods. [Section 5](#results) presents the main results. [Section 6](#conclussions) concludes the paper.
 
-# Data and Empirical Evidence
+# 2. Literature Review {#literature}
 
-[*Se mencionan los datos utilizados con más detalle y se describen las estadísticas descriptivas de las variables más importantes a analizar*]{style="color:red;"}
+Early studies on the relationship between traffic safety laws and the reduction in accident fatalities in the USA were conducted by @peltzman1975effects and @evans1986effectiveness. Both researchers employed basic statistical techniques, utilizing before-and-after observations to examine these relationships. Their findings indicated that the implementation of seat belt laws effectively reduced traffic fatalities by 40 to 50 percent. However, they also identified a compensating effect, specifically, an increase in fatalities among vulnerable road users (pedestrians and bicyclist). This increase was attributed to a rise in reckless driving behavior, as individuals who felt safer due to seat belt usage may engage in less cautious driving. This phenomenon is known as the *compensating behavior hypothesis*.
 
-[*Se debe mencionar los datos con los se van a trabajar (país o ciudad, período o año, población analizada...)*]{style="color:red;"}
+Several studies have investigated the relationship of road accidents fatalities with other economic and mobility factors. One prominent example is the work of @dee2003fatality, who employed a two way fixed effects model to study the relationship between speed limits and traffic fatalities. Their findings suggest a positive relationship was positive overall, with a 13 to 14 percent increase in fatalities among elders and women, though men were an exception.
 
-As mentioned before, the data employed for this paper was originally gather by @cohen2003 from a variety of official US authorities. The dataset can be download directly from [Leinav's website](https://leinav.people.stanford.edu/research), or from the `R` library `pder` of panel data econometrics developed by @pder. The panel includes data of 50 U.S. states plus the District of Columbia (also known as Washington D.C.) from 1983 to 1997 in a yearly basis. The main variables are the *average seat belt usage rate* (SBUR) and the *traffic fatalities of vehicle occupants* and *non-occupants*, for short, TFVO and TFVN accordingly. The SBUR is reported by the *Highway Safety Office of each state*, which for most states is disaggregated by front and rear seats. However, as some states only have the value for front seat occupants, we exclude for the analysis the rear seats values. This data is collected by the states in a longitudinal survey following the *National Highway Traffic Safety Administration* (NHTSA) guidelines, however, a potential issue is that states may choose to overstate their usage in order to receive federal budgets by meeting certain thresholds. To overcome this concern, @cohen2003 elaborated robustness checks with the aid of telephone self-reported surveys conducted by the Center for Disease Control (CDC).
+@burke2015gasoline conducted a study using global, country-specific data, revealing that a 10 percent increase in gasoline prices was associated with a 3 to 6 percent reduction in traffic fatalities. They used fixed effects with instrumental variables, such as each country's oil reserves, and international oil prices to deal with potential endogeneity. Additionally, @kopits2005traffic explored the relationship between financial wellness and traffic safety using pooled OLS with quadratic functions. They found a non-linear relationship between income and accidents, where accidents initially increased with income but later decreased as income continued to rise. Lastly, @harper2014effect, in a study of U.S. citizens, found that traffic safety laws led to increased seat belt usage across all education levels. However, the increase was more pronounced among individuals with lower levels of education, as identified using difference-in-differences estimators.
 
-By its part, the number of fatalities was obtained from the *Fatalities Analysis Reporting System* (FARS). They divide the fatalities by occupants and non-occupants (pedestrians and byciclists). A limitation of this data to our design is that in some states, the compulsory laws of seat bealt usage is only for front seats, then one could argue that in those states, rear passengers should be consider as non-occupants. Potentially this could bias upward our estimates for TFVO. For the TFVN's estimates, the direction and presence of the bias is unknown as may be opposite effects through different mechanisms.
+More recent studies, beyond Cohen's foundational work, have challenged the compensating effect hypothesis from earlier research on the relationship between seat belt usage and road fatalities. One notable study by @houston2007risk, using fixed effects, found that stricter regulations led to safer driving practices, contrary to the compensating effects hypothesis. In this context, stricter laws refer to primary enforcement, where drivers can be stopped and fined solely for not complying with traffic safety laws, as opposed to secondary enforcement, where drivers can only be penalized for non-compliance if stopped for an unrelated offense.
 
-The @fig-data-fatalities_usage presents the evolution of these variables in the period of analysis, where the black line refers to the SBUR, which increases over time as expected.
+Other studies have also explored the impact of seat belt laws and usage on traffic safety. For instance, @dee2009motorcycle conducted a within-comparison analysis, concluding that increased helmet usage significantly reduced mortality risk for motorcyclists by 34 percent. Similarly, @carpenter2008effects, using a difference-in-differences approach, found that stricter seat belt laws led to an 8 to 9 percent reduction in fatality rates among youths, and a higher usage rate of 40 to 50 percent. Although this study observed minimal effects on non-fatal injuries, it aligns closely with @eluru2007joint, who utilized a mixed logit model to demonstrate that increased seat belt usage not only reduces the risk of fatal injuries but also promotes safer driving practices among users.
 
-Is worth noting that the TFVO and TFVN can adopt different forms, for instance, one could take the raw number of fatalities. Nevertheless, as shown by the @fig-data-fatalities_usage in the dashed lines, this measure does not exhibit a decreasing trend across years, as the vehicle population also increased. One solution is to normalize by vehicle miles traveled (VMT).[^1] The green and purples solid lines of @fig-data-fatalities_usage present the normalized fatalities, where clearly, the TFVO and TFVN decrease with time. In summary, the SBUR has a negative correlation with the TFVO and TFVN, however, we cannot conclude causality as it may be spurious by confounding variables such as national road safety campaigns and road infrastructure conditions. Besides, the variable
+Regarding spatial econometrics applied to traffic safety, one prominent study was done by @MAJUMDAR2004551, who find spatial correlation effects, specifically from east to west, although, these effects were not as pronounced as temporal correlations. A local study was performed for Tenessee by @HEZAVEH2021156, where it was concluded that seat belt usage was spatially correlated among neighboring areas homewise. Additionally, a related study focused on Iran's provinces explored the impact of safety measures such as the installation of speed limit cameras in rural areas. Using a bivariate random effects spatial model, the authors concluded that there were spillover effects from neighboring provinces, enhancing road safety due to these interventions. Finally, @ZHOU2019105283 introduced a spatial Markov chain model to incorporate spatial effects into the temporal dynamics of road traffic fatality rates. Analyzing data from 1975 to 2015 across 48 U.S. states, the model revealed that a state's transition between different levels of fatality risk is significantly influenced by the conditions in neighboring states.
+
+In summary, while several studies have addressed the relationship between traffic safety laws, seat belt usage and road fatalities, most have overlooked potential spatial dependencies. To tackle this problem, we consider spatial econometric models to account for potential spillover effects in US from 1990 to 1997. By doing this, we contribute to an extent road safety literature that aims to provide evidence about the efficiency of compulsory laws. Besides, we provide new insights to the debate between the compensating effects hypothesis and the risk reduction hypothesis.
+
+# 3. Data and Empirical Evidence {#data}
+
+As mentioned before, the data employed for this paper was originally gather by @cohen2003 from a variety of official US authorities. The dataset can be download directly from [Leinav's website](https://leinav.people.stanford.edu/research), or from the `R` library `pder` of panel data econometrics developed by @pder. The panel includes data of 50 U.S. states plus the District of Columbia (also known as Washington D.C.) from 1983 to 1997 in a yearly basis.
+
+The main variables are the *average seat belt usage rate* (SBUR) and the *traffic fatalities of vehicle occupants* and *non-occupants*, for short, TFVO and TFVN accordingly. The SBUR is reported by the *Highway Safety Office* of each state, which for most states is disaggregated by front and rear seats. However, as some states only have the value for front seat occupants, we exclude for the analysis the rear seats values. This data is collected by the states in a longitudinal survey following the *National Highway Traffic Safety Administration* (NHTSA) guidelines. Nonetheless, a potential issue is that states may overstate their usage in order to receive federal budgets by meeting certain thresholds. To overcome this concern, @cohen2003 elaborated robustness checks with the aid of telephone self-reported surveys conducted by the Center for Disease Control (CDC).
+
+By its part, the number of fatalities was obtained from the *Fatalities Analysis Reporting System* (FARS). They divide the fatalities by occupants and non-occupants (pedestrians and byciclists). A limitation of this data to our design is that in some states, the compulsory laws of seat bealt usage is only for front seats. Then, one could argue that in those states, rear passengers should be consider as non-occupants. Potentially this could bias upward our estimates for TFVO. For the TFVN's estimates, the direction and presence of the bias is unknown as may be opposite effects through different mechanisms.
+
+@fig-data-fatalities_usage presents the evolution of these variables in the period of analysis, where the black line refers to the SBUR, which increases over time as expected. Is worth noting that the TFVO and TFVN can adopt different forms, for instance, one could take the raw number of fatalities. Nevertheless, as shown by the @fig-data-fatalities_usage in the dashed lines, this measure does not exhibit a decreasing trend across years, as the vehicle population also increased. One solution is to normalize by vehicle miles traveled (VMT), values represented by the green and purple solid lines, where clearly, the TFVO and TFVN decrease with time.[^1]
 
 [^1]: henceforth, the TFVO and TFVN will refer to the normalized values.
 
 ```{r}
 #| label: fig-data-fatalities_usage
-#| fig-cap: "Deaths due to vehicular accidents and the SBUR."
+#| fig-cap: "Deaths due to vehicular accidents and the SBUR. Own calculations based on data from Cohen and Einav (2003)"
 #| fig-width: 10
 #| fig-height: 6
 processed_data <- SeatBelt %>% 
@@ -130,22 +152,235 @@ ggplot(processed_data, aes(x = year, y = fatalities, color = category, linetype 
   )
 ```
 
--   @fig-data-fatalities_usage 1. tres mapas en diferentes momentos en el tiempo (si hay suficiente cambio, si no hay tanto, poner solo
+In summary, the SBUR has a negative correlation with the TFVO and TFVN, however, we cannot conclude causality as it may be spurious by confounding variables such as national road safety campaigns and road infrastructure conditions. Additionally, the dependent variable Seat Belt Usage Rate (SBUR) may be endogenous. For example, in states with adverse road conditions, individuals might be more likely to use seat belts, potentially influencing the observed relationship.
+
+To control for the endogeneity of SBUR, it is possible to use instrumental variables. Recall that instruments must be both relevant and exogenous. One set of potential instruments that satisfy these criteria can be derived from policy variations across states over time. As shown in @fig-data-fatalities_usage, the evolution of the number of states adopting different types of seat belt enforcement laws during the study period offers a promising set of instruments. These include dichotomous variables indicating whether a state has implemented a primary enforcement law that was not preceded by a secondary enforcement law (dark blue), whether a state has a secondary enforcement law (yellow), or whether a state has a primary law that was preceded by a secondary enforcement law (cyan). Additionally, the number of states without any seat belt legislation is depicted in gray.
+
+These instruments are potentially relevant because they reflect policy shifts that directly influence seat belt usage rates. One could argue that they are endogenous as greater the number of road fatalities in a state, is likely that legislators aprove compulsory laws easily. Nevertheless, as highlighted by @cohen2003, a detailed suvey conducted by the NHTSA comment that these legal changes were driven by political and administrative factors rather than the number of fatalities. Therefore, these instruments can be considered exogenous and serve as plausible tools for addressing the endogeneity of SBUR.
 
 ```{r}
-library(pder)
-data("SeatBelt")
-head(SeatBelt)
+#| label: fig-data-legislation
+#| fig-cap: "Legislation over time in US. Own calculations based on data from Cohen and Einav (2003)"
+#| fig-width: 10
+#| fig-height: 6
+SeatBelt %>% 
+  select(year, ds, dp, dsp) %>%
+  group_by(year) %>% 
+  summarise(ds = sum(ds - dsp), dp = sum(dp), dsp = sum(dsp)) %>% ungroup %>% 
+  mutate(dnl = 51 - ds - dp - dsp) %>% 
+  pivot_longer(cols = starts_with('d'), 
+               names_to = 'category', values_to = 'value') %>% 
+  mutate(category = recode(category, 
+                           dnl = "No law",
+                           dp = "Primary enforcement",
+                           ds = "Secondary enforcement",
+                           dsp = "Primary preeced by secondary"
+                           )) %>% 
+  ggplot(aes(x = as.factor(year), y = value, fill = category)) +
+  geom_bar(stat = 'identity', width = 0.5) +
+  scale_fill_manual(values = c(
+    "No law" = "#CECECE",
+    "Primary enforcement" = "#005AB4",
+    "Primary preeced by secondary" = "#00C8E7",
+    "Secondary enforcement" = "#FFD6A2"
+  )) +
+  scale_y_continuous(minor_breaks = seq(0, 51, 2)) +
+  labs(x = "Year", y = "No. of States") +
+  theme_minimal(14) +
+  guides(
+    fill = guide_legend(nrow = 2, byrow = TRUE)
+  ) +
+  theme(
+    legend.position = "top",
+    legend.title = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
+  )
 ```
 
-# Econometric Model
+Other control variables originate from various data sources, with detailed descriptions available in the appendix of @cohen2003. @tbl-descriptive_continous provides a summary of the continuous variables, including demographic factors to control for heterogeneity among individuals within a state, traffic density, unemployment rate, crime-related variables, and fuel taxes. These preliminary descriptive statistics highlight two important observations. First, they indicate that the data is balanced for all variables, except for SBUR, which is balanced only from 1990 onward. Second, the fatality rates and seat belt usage provide substantial variation. The former observation implies that the subsequent spatial analysis will be limited to the period from 1990, as spatial estimation methods require balanced panel data. Lastly, we consider as controls other laws such as speed limits, maximum allowable blood alcohol content and minimum legal drinking age. These variables are represented as dummy indicators.
 
-[*plantear la ecuación del modelo a estimar y describir éste modelo: variable dependiente, independientes y error*]{style="color:red;"}
+::: {#tbl-descriptive_continous}
+![](results/tables/descriptive_stats.jpg){fig-align="center"}
 
-# Results
+Description of continuous variables. Source: @cohen2003.
+:::
 
-[*Descripción de los de resultados, deduciendo implicaciones*]{style="color:red;"}
+In the following of this section, we will delve deeper into the spatial patterns observable in our data, particularly focusing on how fatality rates and seat belt usage in one state correlate with those in neighboring states. This preliminary analysis will provide the foundation for a more sophisticated spatial econometric modeling. To visualize the spatial distribution of the TFVO and the TFVN, @fig-maps_outcomes presents four maps showing these variables in normalized values for the years 1990 and 1997, the beginning and end of our study period for spatial analysis. The lower panes show the TFVN maps, from which we can observe, that there is variation between states in both years. Some states, particularly in the Northeast and West Coast, consistently show higher rates of non-occupant fatalities. A slight overall reduction in TFVN from 1990 to 1997 is noticeable, with several states transitioning to lower fatality categories.
 
-# Conclussions
+The upper maps represent the TFVO for the same years. We observe that occupant fatalities appear to have a different spatial distribution compared to non-occupant fatalities. States in the central and southern parts of the country tend to show higher rates of occupant fatalities. As with non-occupant fatalities, there is a general downward trend from 1990 to 1997, with several states improving their situation. However, there are excecptions such as the state of Montona that worsened their situation.
 
-[*descripción de los principales resultados encontrados, implicaciones y discusión (implicaciones de política...)*]{style="color:red;"}
+::: {#fig-maps_outcomes}
+![](results/figures/map_fatalities.png)
+
+Normalized TFVO (upper panes) and TFVN (lower panes) spatial visualization. Own calculations based on data from @cohen2003.
+:::
+
+These spatial patterns suggest the potential for spillover effects between neighboring states, which supports the use of spatial modeling techniques in our analysis. Additionally, the clustering observed may indicate positive spatial correlation in the dependent variables. The notable differences between occupant and non-occupant fatalities suggest that these two types of fatalities might be influenced by distinct factors or respond differently to road safety policies, such as mandatory seat belt laws. This would suggest the need for distinct specifications of the spatial weights matrix, potentially based on the inverse of visitor numbers for each group between states. However, constructing such a matrix is unfeasible due to the lack of available data on visitor volumes, event for recent years. Hence, we will assume that adjacent states will have vicinity whiles non adjacent do not, *i.e.*, we will use a Queen weight matrix. This modelation requires that we exclude from the sample the states of Hawaii and Alaska for the spatial analysis as they do not share borders with other states.
+
+The temporal evolution visible in these maps also supports the decreasing trend in fatalities that we observed in @fig-data-fatalities_usage, thus providing a complementary spatial perspective to the longitudinal analysis. In a similar spirit, @fig-maps_usage presents the maps for SBUR in the years 1990 and 1997. Again, we can see some clusters of spatial dependency, some of those changing over time.
+
+::: {#fig-maps_usage}
+![](results/figures/map_usage.png)
+
+Normalized SBUR spatial visualization. Own calculations based on data from @cohen2003.
+:::
+
+The Global Moran’s I statistics presented in @tbl-moran_results reveal the spatial correlation patterns for our interest variables across U.S. states for 1990 and 1997. These statistics are crucial in identifying whether there is spatial dependence in fatalities and seat belt usage across neighboring states.
+
+::: {#tbl-moran_results}
+![](results/tables/spatial_moran.jpeg)
+
+Moran I Statistic Results for Different Variables. Own calculations.
+:::
+
+For TFVN, the Moran’s I values are positive and statistically significant for both 1990 (0.2824, p-value = 0.000880) and 1997 (0.3594, p-value = 0.000037). This indicates a strong spatial correlation for the selected matrix, suggesting that states with high non-occupant fatalities are likely to be geographically clustered with neighboring states that exhibit similar trends and vice-versa. The persistence of this spatial pattern over time supports the idea that fatalities among pedestrians and cyclists are influenced by factors that have regional effects, potentially including shared road safety policies or traffic conditions. Similarly, occupant fatalities demonstrate significant spatial correlation in both 1990 (0.4325, p-value = 0.000001) and 1997 (0.5208, p-value = 0.000000). These even higher Moran’s I values suggest a pronounced regional clustering effect. This pattern may be reflective of region-specific traffic behaviors, enforcement levels, or safety infrastructure, contributing to regional variations in occupant safety outcomes.
+
+In contrast, the Moran’s I values for seat belt usage show no significant spatial correlation in either 1990 (-0.0623, p-value = 0.6652) or 1997 (0.0385, p-value = 0.2697). This lack of spatial dependence suggests that seat belt usage rates across states do not exhibit strong regional clustering. Instead, seat belt adoption appears to be more idiosyncratic or driven by state-specific policies and enforcement rather than regional spillover effects.
+
+Based on the @cohen2003 work, when controlling for fixed effects and using the residuals, the Moran’s I for non-occupant fatalities residuals (rfnol) shows no significant spatial correlation in either 1990 (0.0270, p-value = 0.3091) or 1997 (-0.0247, p-value = 0.5158). This suggests that after accounting for Two-Way FE (TWFE), the spatial dependence observed in non-occupant fatalities is largely mitigated, indicating that much of the spatial pattern can be explained by fixed characteristics of the states and time rather than spillover effects. For occupant fatalities residuals (rfol), there is no significant spatial correlation in 1990 (0.0094, p-value = 0.3779), but a slight significant spatial correlation emerges in 1997 (0.1786, p-value = 0.0176). This might suggests that by the end of the study period, some spatial dependence remains in occupant fatalities after controlling for fixed effects, possibly indicating emerging regional factors or policies that may have deferentially impacted neighboring states and that also motivate some possible spatial corrections. In general, this patterns help us supporting any finding in spatial dependence in error terms.
+
+Moran's I allow us to see the global spatial dependence in our data and the potential exploitation based on a TWFE panel data model. In @fig-global_moran we can see the local distribution of the I moran statistic, which support previous annotations.
+
+::: {#fig-global_moran}
+![](results/figures/map_global_moran.png)
+
+Moran I Statistic Results for Different Variables. Own calculations.
+:::
+
+# 4. Empirical strategy {#model}
+
+Our empirical strategy builds upon the framework established by @cohen2003, extending it to incorporate spatial econometric techniques. We begin with their baseline model and then introduce spatial components to capture potential spillover effects and regional patterns in traffic fatalities.
+
+## 4.1 Baseline model
+
+Following @cohen2003, our baseline model is a two-way fixed effects panel data specification:
+
+```{=tex}
+\begin{equation}
+    Y_{it} = \beta_0 + \beta_1 U_{it} + \mathbf{X}_{it}'\boldsymbol{\gamma} + \alpha_i + \lambda_t + \epsilon_{it}
+\end{equation}
+```
+where $Y_{it}$ represents the fatality rate (either occupant or non-occupant for both log-log and level-log) in state $i$ at time $t$, $U_{it}$ is the seat belt usage rate, $\mathbf{X}_{it}$ is a vector of control variables, $\alpha_i$ and $\lambda_t$ are state and year fixed effects respectively, and $\epsilon_{it}$ is the error term. The fixed effects capture phenomenons such as weather, national campaigns, the adoption of airbags and changes in road infrastructures.
+
+To address potential endogeneity of seat belt usage, we use instrumenal variables for SBUR as follows:
+
+```{=tex}
+\begin{equation}
+    U_{it} = \delta_0 + \mathbf{Z}_{it}'\boldsymbol{\delta} + \mathbf{X}_{it}'\boldsymbol{\theta} + \mu_i + \nu_t + \eta_{it}
+\end{equation}
+```
+where $\mathbf{Z}_{it}$ is a vector of instrumental variables related to seat belt laws as discussed in previous sections. The selection of a TWFE model with IV on SBUR is not arbitrary, besides of understanding the problem, it responds to econometric evidence. For instance, we made Hausman test for panel data to determine whether a random effects model or a fixed effects model were preferable. For both dependent variables, we reject the null hypothesis and lean towards FE. Besides, the instruments were tested for a weak instruments test. Our results (see @tbl-cohan_regs) for the base line model are identical to the ones provided by @cohen2003.
+
+::: {#tbl-cohan_regs}
+![](results/tables/cohan_regs.png){}
+
+Effect of seat belt use on vehicular accident fatalities. Own calculations.
+:::
+
+
+## 4.2 Spatial Extensions: Estimation and Selection Approach
+
+To account for potential spatial dependencies, we extend the baseline model to include spatial components based on a spatial matrix correlation $W$, which is a queen-type first-order spatial contiguity. In this analysis, we applied the fundamental models from the spatial econometrics framework only for the log-log models, as they allows us to interpret the coefficients as elasticities.[^3] Let $u$ the ideosyncratic model and $W_i$ the weigthed spatial matrix for variable $i$, by selecting different combinations of $W_y$, $W_X$ and $W_u$, we can generalized static spatial models as follows:
+
+[^3]: \footnote{We estimate these models using a IV approach within a spatial panel framework. For the spatial models, we employ maximum likelihood estimation techniques as implemented in the \texttt{splm} package in R.}
+
+$$y = \rho W_y y + X \beta + W_X X \theta + \lambda W_u \varepsilon + u.$$    
+
+In the urge to determine the most appropriate spatial specification, we conduct a series of specification tests following the spatial regression decision process discussed in @anselin1996simple and @anselin2005spatial. This approach involves a systematic evaluation of different spatial dependence structures using Lagrange Multiplier (LM) tests.
+
+The process begins with estimating a standard OLS model and then performing LM tests for spatial lag (LML) and spatial error (LME) dependencies. If neither test is significant, we conclude that spatial effects are not present and retain the base model. If only one test is significant, we proceed with the corresponding spatial model. In cases where both tests are significant, we conduct robust versions of these tests (RLML and RLME) to discriminate between the two forms of spatial dependence.
+
+@tbl-LM_test presents the results of these LM tests for our two outcome variables: log of non-occupant fatalities -Log(TFVN)- and log of occupant fatalities -Log(TFVO)-.
+
+::: {#tbl-LM_test}
+![](results/tables/spatial_LM_test.png)
+
+Lagrange Multiplier Tests for Spatial Dependence. Own calculations.
+:::
+
+For Log(TFVN), we observe that the LME test is marginally significant at the 10% level (p = 0.073584), while the LML test is not significant. This suggests a potential spatial error structure. However, the robust tests (RLML and RLME) are both insignificant, indicating that the evidence for spatial dependence is not strong.
+
+For Log(TFVO), all tests (LML, LME, RLML, and RLME) are clearly insignificant, suggesting no strong evidence of spatial dependence in the occupant fatality model. Based on these approach, we conclude that spatial effects are not strongly present in our data, particularly for occupant fatalities and when modeling with SEM or SAR model. Given these findings, we proceed with caution in applying spatial models, recognizing that the benefits of spatial specifications may be limited in our context.
+
+While the Anselin approach using Lagrange Multiplier tests did not provide strong evidence for spatial effects, we implemented a more comprehensive model selection strategy following the top-down approach of @lesage2009introduction. This approach starts with a most complex model, the Spatial Durbin Model (SDM), and uses Likelihood Ratio (LR) tests to determine if simpler models are appropriate.
+
+We conducted LR tests comparing the SDM to simpler spatial models for both non-occupant (TFVN) and occupant (TFVO) fatalities. The results of these tests are presented in @tbl-LR_test. For non-occupant fatalities -Log(TFVN)-, all LR tests reject the null hypotheses at the 5% significance level. This suggests that the SDM best describes the data for non-occupant fatalities, as it cannot be simplified to SAR, SLX, or SEM without significant loss of fit. For occupant fatalities -Log(TFVO)-, the LR test comparing SDM to SLX fails to reject the null hypothesis (p-value = 0.8770746), indicating that the SLX model may be sufficient. A further test comparing SLX to the fixed effects (TWFE IV) model rejects the null hypothesis (p-value = 0.01879178), supporting the use of the SLX model over the simpler FE specification.
+
+::: {#tbl-LR_test}
+![](results/tables/spatial_LR_test.jpeg){fig-align="center"}
+
+Likelihood Ratio Tests for Spatial Model Selection
+:::
+
+Based on these results, we select the SDM for modeling non-occupant fatalities and the SLX model for occupant fatalities. This approach allows us to capture potential spatial spillovers in the case of non-occupant fatalities, while a simpler model with spatially lagged independent variables suffices for occupant fatalities. These model choices align with the more nuanced spatial relationships that may exist in traffic safety outcomes and what we have explored in the previous section. Following this findings, non-occupant fatalities might be more susceptible to cross-border effects due to pedestrian and cyclist mobility patterns, while occupant fatalities may be more localized but still influenced by neighboring states' characteristics
+
+Through this comprehensive empirical strategy, we aim to provide a nuanced understanding of how seat belt laws affect traffic fatalities, accounting for both direct effects and potential spatial spillovers across state borders. Based on our model selection process, we employ two different spatial specifications for non-occupant and occupant fatalities:
+
+- For non-occupant fatalities -Log(TFVN)-, we use the Spatial Durbin Model (SDM):
+```{=tex}
+\begin{equation}
+    \log(TFVN)_{it} = \rho \mathbf{W} \log(TFVN)_{it} + \beta_1 U_{it} + \theta  \mathbf{W} U_{it} + \mathbf{X}_{it}'\boldsymbol{\gamma} + \mathbf{WX}_{it}'\boldsymbol{\delta} + \alpha_i + \lambda_t + \epsilon_{it}
+\end{equation}
+```
+- For occupant fatalities -Log(TFVO)-, we employ the Spatial Lag of X (SLX) model:
+```{=tex}
+\begin{equation}
+    \log(TFVO)_{it} = \beta_1 U_{it} + \mathbf{X}_{it}'\boldsymbol{\gamma} + \theta  \mathbf{W} U_{jt} + \mathbf{WX}_{it}'\boldsymbol{\delta} + \alpha_i + \lambda_t + \epsilon_{it}
+\end{equation}
+```
+where $w_{ij}$ are elements of the spatial weights matrix $\mathbf{W}$, $\rho$ is the spatial autoregressive coefficient, $\theta$ captures the effect of neighboring states' seat belt usage, and $\mathbf{WX}_{it}$ represents the spatially lagged control variables.
+
+These models allow us to capture the spatial dependencies identified in our selection process, providing a more comprehensive analysis of the spatial dynamics in traffic fatalities across states. The SDM for non-occupant fatalities accounts for both global and local spatial spillovers, while the SLX model for occupant fatalities focuses on the spatial effects of neighboring states' characteristics without global spillovers in the dependent variable. The results for 
+
+
+# 5. Results {#results}
+
+In this section we present our findings for both non-occupant (TFVN) and occupant (TFVO) fatalities, comparing the results from our baseline fixed effects (FE) model with those from our selected spatial models.
+
+## 5.1 Non-Occupant Fatalities
+
+@tbl-spatial_farsnocc_regs presents our results for non-occupant fatalities, comparing the fixed effects (FE) model with the Spatial Error Model (SEMFE) and the Spatial Durbin Model (SDMFE), which was our selected model based on the LR tests.
+
+It's important to note that our analysis focuses on the period 1990-1997, while Cohen and Einav (2003) used a longer time frame from 1983-1997. This difference in sample period may contribute to some of the variations we observe in our results compared to the original study.
+
+The coefficient on log(seat belt usage) remains negative and statistically significant across all specifications, suggesting that increased seat belt usage is associated with a reduction in non-occupant fatalities. Specifically, in our preferred SDMFE model, a 1\% increase in seat belt usage is associated with a 0.25\% decrease in non-occupant fatalities, holding other factors constant. Which support compensating behaviour hypothesis. 
+
+This finding contrasts with @tbl-cohan_regs, our spatial models show a significant negative effect. This difference could be attributed to our focus on a later time period, during which the effects of seat belt laws might have become more pronounced, or to our spatial modeling approach capturing regional spillover effects.
+
+::: {#tbl-spatial_farsnocc_regs}
+![](results/tables/spatial_farsnocc_regs.jpeg){}
+
+Spatial model estimates for TVFN. Own calculations.
+:::
+
+Other notable coefficients in our SDMFE model include:
+
+- Log(mean age) shows a strong positive association with non-occupant fatalities, which aligns with @cohen2003 findings. This consistency across different time periods suggests a robust relationship between an aging population and non-occupant fatalities. But the effect is higher than the seminar work.
+- Log(\% blacks) shows a significant negative association, which differs from @cohen2003 insignificant result. This difference might be due to demographic shifts or changing patterns of non-occupant traffic involvement in the 1990s compared to the earlier part of their sample and the demographic.
+- Log(violent crimes) shows a positive association, which wasn't significant in @cohen2003 model. 
+
+
+## 5.2 Occupant Fatalities
+
+@tbl-spatial_farsocc_regs presents our results for occupant fatalities, comparing the TWFE IV model  (henceforth called FE model) with the Spatial Lag of Exogenous Variables (SLXFE) model.
+
+::: {#tbl-spatial_farsocc_regs}
+![](results/tables/spatial_farsocc_regs.jpeg){}
+
+Spatial model estimates for TVFO. Own calculations.
+:::
+
+In our FE model, we find that a 1\% increase in seat belt usage is associated with a 0.14\% decrease in occupant fatalities, significant at the 1\% level. This is similar to the TWFE IV estimates, that found a -0.133 elasticity (see @tbl-cohan_regs), suggesting that the effect of seat belt usage on occupant fatalities remained relatively stable into the 1990s. However, in our SLXFE model, while the coefficient remains negative (-0.0992), it loses statistical significance. This change suggests that accounting for spatial effects alters our understanding of the relationship between seat belt usage and occupant fatalities, particularly in the later part of the overall study period. From @fig-data-fatalities_usage one could argue that the biggest decrease in the TFVO occur during the first eight years, conversely, from 1992 it remains approximately steady. Notice that precisely this period is a high proportion of the time considered for spatial analysis. On the other hand, the limited specification of the matrix $W$ could be a strong assumtion that does not correlated with reality given wrong estimates.
+
+# 6. Conclussions {#conclussions}
+
+Our study extends the work of Cohen (2003) by applying spatial econometric techniques to analyze the impact of seat belt usage on traffic fatalities across U.S. states from 1990 to 1997. The results reveal significant findings. The Spatial Durbin Model (SDM) indicates that a 1% increase in seat belt usage is associated with a 0.25% decrease in non-occupant fatalities. For occupant fatalities, the fixed effects model shows a significant negative relationship between seat belt usage and fatalities, aligning with Cohen's findings, though this effect becomes statistically insignificant in the Spatial Lag of X (SLX FE) model.
+
+These results underscore the importance of accounting for spatial dependencies and spillover effects when evaluating traffic safety laws. However, several limitations may influence the accuracy of our estimates. One key concern is the potential misspecification of the spatial weights matrix (W). Ideally, a matrix reflecting visitor volumes between states could more accurately represent the influence of non-adjacent states, particularly for non-occupant fatalities. However, due to the lack of such data, we relied on a Queen weight matrix, which assumes influence based solely on adjacency. This approximation may affect the precision of our spatial estimates.
+
+Furthermore, the time frame of our analysis might contribute to the observed results. By 1990, many states had already implemented seat belt laws, meaning that the most substantial effects on occupant fatalities could have occurred before our study period. In contrast, the impact on non-occupant fatalities might take longer to manifest, potentially explaining the stronger effects observed in this group.
+
+Despite these challenges, our findings provide valuable insights into the spatial dynamics of traffic safety laws. Future research should explore more recent data and consider alternative spatial weighting schemes to enhance the robustness of these results. This study offers a novel approach that policymakers can use as a benchmark for evaluating the broader impacts of traffic safety laws across states.
+
+:::
